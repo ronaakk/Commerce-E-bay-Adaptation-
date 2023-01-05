@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -36,28 +37,47 @@ def logout_view(request):
     return HttpResponseRedirect(reverse("index"))
 
 
+# Making a register form
+class RegisterForm(forms.Form):
+    username = forms.CharField(label='', min_length=2, widget=forms.TextInput(
+        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Username"}))
+    email = forms.CharField(label='', min_length=5, widget=forms.TextInput(
+        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Email"}))
+    password = forms.CharField(label='', min_length=2, widget=forms.TextInput(
+        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Password"}))
+    confirmation = forms.CharField(label='', min_length=2, widget=forms.TextInput(
+        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Confirm Password"}))
+
+
 def register(request):
     if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
+        # Passing in the form that was submitted
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            confirmation = form.cleaned_data["confirmation"]
 
-        # Ensure password matches confirmation
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
-            })
+            # Ensure password matches confirmation
+            if password != confirmation:
+                return render(request, "auctions/register.html", {
+                    "message": "Passwords must match.",
+                    "register_form": form
+                })
 
-        # Attempt to create new user
-        try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
-        except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Username already taken."
-            })
-        login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+            # Attempt to create new user
+            try:
+                user = User.objects.create_user(username, email, password)
+                user.save()
+            except IntegrityError:
+                return render(request, "auctions/register.html", {
+                    "message": "Username already taken.",
+                    "register_form": form
+                })
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "auctions/register.html")
+        return render(request, "auctions/register.html", {
+            "register_form": RegisterForm()
+        })

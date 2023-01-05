@@ -1,29 +1,34 @@
 {% extends "auctions/layout.html" %}
+{% load widget_tweaks %}
 
 {% block body %}
 
     <h2>Register</h2>
 
     {% if message %}
-        <div>{{ message }}</div>
+        <div style = "color:red;">{{ message }}</div>
+        <br>
     {% endif %}
 
     <form action="{% url 'register' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+            {% render_field register_form.username class="form-control" type="text" name="username" placeholder="Username" %}
         </div>
         <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
+            {% render_field register_form.email class="form-control" type="email" name="email" placeholder="Email" %}
         </div>
         <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
+            {% render_field register_form.password class="form-control" type="password" name="password" placeholder="Password" %}
         </div>
         <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+            {% render_field register_form.confirmation class="form-control" type="password" name="confirmation" placeholder="Confirm Password" %}
         </div>
+        
         <input class="btn btn-primary" type="submit" value="Register">
     </form>
+
+    <br>
 
     Already have an account? <a href="{% url 'login' %}">Log In here.</a>
 
