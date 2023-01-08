@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+from .forms import *
 from .models import User
 
 
@@ -18,6 +19,7 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
+        # Returns a user object
         user = authenticate(request, username=username, password=password)
 
         # Check if authentication successful
@@ -35,18 +37,6 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
-
-# Making a register form
-class RegisterForm(forms.Form):
-    username = forms.CharField(label='', min_length=2, widget=forms.TextInput(
-        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Username"}))
-    email = forms.CharField(label='', min_length=5, widget=forms.TextInput(
-        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Email"}))
-    password = forms.CharField(label='', min_length=2, widget=forms.TextInput(
-        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Password"}))
-    confirmation = forms.CharField(label='', min_length=2, widget=forms.TextInput(
-        attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Confirm Password"}))
 
 
 def register(request):
@@ -81,3 +71,20 @@ def register(request):
         return render(request, "auctions/register.html", {
             "register_form": RegisterForm()
         })
+
+
+def createListing(request):
+    if request.method == "POST":
+        listing = NewListingForm(request.POST)
+        if listing.is_valid():
+            creator = Listing.objects.get()
+
+
+
+            return render(request, "auctions/create.html", {
+                "create_form": NewListingForm()
+            })
+    else:
+        return render(request, "auctions/create.html", {
+                "create_form": NewListingForm()
+            })
