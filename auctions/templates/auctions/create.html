@@ -2,6 +2,10 @@
 
 {% block body %}
     <h2>Create a New Listing</h2>
+    <br>
+    {% if message %}
+        <div style="color:red">{{ message }}</div>
+    {% endif %}
 
     <form action= "{% url 'create' %}" method="POST">
         {% csrf_token %}

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.forms import ModelForm, Textarea, NumberInput, Select, TextInput
 
 
 class User(AbstractUser):
@@ -14,18 +15,19 @@ class Listing(models.Model):
     CATEGORIES = [
     ('Toys', 'Toys'),
     ('Electronics', 'Electronics'),
-    ('Lifsetyle', 'Lifestyle'),
+    ('Lifestyle', 'Lifestyle'),
     ('Home', 'Home'),
-    ('Fashion', 'Fashion')
+    ('Fashion', 'Fashion'),
+    ('Other', 'Other')
     ]   
 
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
-    title = models.CharField(max_length=64)
-    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    description = models.CharField(blank=True, max_length=1064)
+    title = models.CharField(max_length=64, blank=False, null=False)
+    minimum_bid = models.IntegerField(blank=False, null=True) 
+    description = models.CharField(blank=True, max_length=1064, null=True)
+    starting_bid = models.IntegerField(blank=True, null=True)
     category = models.CharField(max_length=64, blank=True, choices=CATEGORIES)
-    image = models.URLField(default='https://user-images.githubusercontent.com/52632898/161646398-6d49eca9-267f-4eab-a5a7-6ba6069d21df.png')
-    starting_bid = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    image = models.ImageField(default='https://user-images.githubusercontent.com/52632898/161646398-6d49eca9-267f-4eab-a5a7-6ba6069d21df.png')
     bid_counter = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     winner = models.CharField(max_length=64, blank=True, null=True)
@@ -33,9 +35,25 @@ class Listing(models.Model):
     def _str__(self):
         return f"{self.title} by {self.creator}"
 
+# Creating a listing form out of the Listings model
+class ListingForm(ModelForm):
+    class Meta:
+        model = Listing
+        exclude = ['creator', 'bid_counter', 'active', 'winner']
+        widgets = {
+            'title': TextInput(
+                attrs={'class': 'form-control', "style": "margin-bottom: 10px", 'placeholder': 'Title'}),
+            'description': Textarea(
+                attrs={'rows': 10, 'columns':4, 'class': 'form-control', "style": "margin-bottom: 10px", 'placeholder': 'Description'}),
+            'minimum_bid' : NumberInput(
+                attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Minimum Bid ($)"}),
+            'starting_bid': NumberInput(attrs={'class': 'form-control', "placeholder": "Starting Bid ($)"}),
+            'category' : Select(attrs={'choices': Listing.CATEGORIES, "class": "form-control"})
+        }
+
 class Bid(models.Model):
-    bid = models.DecimalField(decimal_places=2, max_digits=10)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bid")
+    bid = models.IntegerField()
     date_created = models.DateTimeField(auto_now=True)
     auction = models.ForeignKey(Listing, on_delete=models.CASCADE)
 

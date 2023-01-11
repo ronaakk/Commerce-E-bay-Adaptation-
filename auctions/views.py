@@ -1,9 +1,8 @@
 from django import forms
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse
+from django.shortcuts import redirect, render
 
 from .forms import *
 from .models import User
@@ -25,7 +24,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return redirect('index')
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -36,7 +35,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return redirect('index')
 
 
 def register(request):
@@ -66,7 +65,7 @@ def register(request):
                     "register_form": form
                 })
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return redirect('index')
     else:
         return render(request, "auctions/register.html", {
             "register_form": RegisterForm()
@@ -75,16 +74,39 @@ def register(request):
 
 def createListing(request):
     if request.method == "POST":
-        listing = NewListingForm(request.POST)
-        if listing.is_valid():
-            creator = Listing.objects.get()
 
+        listing = Listing(request.POST)
 
+        minimum_bid = request.POST['minimum_bid']
+        starting_bid = request.POST['starting_bid']
 
+        if starting_bid > minimum_bid:
             return render(request, "auctions/create.html", {
-                "create_form": NewListingForm()
-            })
+            "message": "The Starting bid cannot be higher than the Minimum bid.",
+            "create_form": listing
+        })
+    
+        creator = request.user
+        title = request.POST['title']
+        description = request.POST['description']
+        image = request.POST['image']
+        category = request.POST['category']
+
+        # Using .objects.create much simpler solution
+        auction = Listing.objects.create(
+            creator=creator,
+            title=title,
+            description=description,
+            minimum_bid=minimum_bid,
+            starting_bid=starting_bid,
+            category=category,
+            image=image,
+        )
+
+        return render(request, "auctions/index.html", {
+            "message": "Listing Created Successfully."
+        })
     else:
         return render(request, "auctions/create.html", {
-                "create_form": NewListingForm()
-            })
+            "create_form": ListingForm()
+        })
