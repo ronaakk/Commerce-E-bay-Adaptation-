@@ -75,16 +75,14 @@ def register(request):
 def createListing(request):
     if request.method == "POST":
 
-        listing = Listing(request.POST)
-
         minimum_bid = request.POST['minimum_bid']
         starting_bid = request.POST['starting_bid']
 
         if starting_bid > minimum_bid:
+            messages.error(request, 'Starting bid cannot be higher than the Minimum bid.')
             return render(request, "auctions/create.html", {
-            "message": "The Starting bid cannot be higher than the Minimum bid.",
-            "create_form": listing
-        })
+                "create_form": ListingForm(request.POST)
+            })
     
         creator = request.user
         title = request.POST['title']

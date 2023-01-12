@@ -1,15 +1,50 @@
 {% extends 'auctions/layout.html' %}
+{% load widget_tweaks %}
 
 {% block body %}
     <h2>Create a New Listing</h2>
+
+    <!-- To display error message -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div style="color:red" {% if message.tags %} class="{{ message.tags }}"{% endif %}> 
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
     <br>
-    {% if message %}
-        <div style="color:red">{{ message }}</div>
     {% endif %}
 
     <form action= "{% url 'create' %}" method="POST">
         {% csrf_token %}
-        {{create_form.as_p}}
+        
+        <div class="form-group">
+            <label for="selectField" class="form-label">Title</label>
+            {% render_field create_form.title class="form-control" type="text" name="title" %}
+        </div>
+        <div class="form-group">
+            <label for="selectField" class="form-label">Minimum Bid ($)</label>
+            {% render_field create_form.minimum_bid class="form-control" type="number" name="minimum_bid" placeholder="0" %}
+        </div>
+        <div class="form-group">
+            <label for="selectField" class="form-label">Description</label>
+            {% render_field create_form.description class="form-control" type="text" name="description" %}
+        </div>
+        <div class="form-group">
+            <label for="selectField" class="form-label">Starting Bid ($)</label>
+            {% render_field create_form.starting_bid class="form-control" type="number" name="starting_bid" placeholder="0" %}
+        </div>
+        <div class="form-group">
+            <label for="selectField" class="form-label">Category</label>
+            {% render_field create_form.category id="selectField" class="form-control" type="select" name="category" %}
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlFile1">Image</label>
+            {% render_field create_form.image id="exampleFormControlFile1" class="form-control-file" type="file" name="image" %}
+            {% comment %} <input type="file" class="form-control-file" id="exampleFormControlFile1"> {% endcomment %}
+        </div>
+
         <input class="btn btn-primary" type="submit" value="Create">
     </form>
 

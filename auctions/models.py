@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.forms import ModelForm, Textarea, NumberInput, Select, TextInput
+from django.forms import ModelForm, Textarea, NumberInput, Select, TextInput, FileInput
 
 
 class User(AbstractUser):
@@ -42,13 +42,14 @@ class ListingForm(ModelForm):
         exclude = ['creator', 'bid_counter', 'active', 'winner']
         widgets = {
             'title': TextInput(
-                attrs={'class': 'form-control', "style": "margin-bottom: 10px", 'placeholder': 'Title'}),
+                attrs={'class': 'form-control', "style": "margin-bottom: 10px"}),
             'description': Textarea(
-                attrs={'rows': 10, 'columns':4, 'class': 'form-control', "style": "margin-bottom: 10px", 'placeholder': 'Description'}),
+                attrs={'rows': 10, 'columns':4, 'class': 'form-control', "style": "margin-bottom: 10px"}),
             'minimum_bid' : NumberInput(
-                attrs={"class": "form-control", "style": "margin-bottom: 10px", "placeholder": "Minimum Bid ($)"}),
-            'starting_bid': NumberInput(attrs={'class': 'form-control', "placeholder": "Starting Bid ($)"}),
-            'category' : Select(attrs={'choices': Listing.CATEGORIES, "class": "form-control"})
+                attrs={"class": "form-control", "style": "margin-bottom: 10px"}),
+            'starting_bid': NumberInput(attrs={'class': 'form-control'}),
+            'category' : Select(attrs={'choices': Listing.CATEGORIES, "class": "form-control"}),
+            'image' : FileInput(attrs={'class':'form-control', 'required': False})
         }
 
 class Bid(models.Model):
