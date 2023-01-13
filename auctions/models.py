@@ -27,7 +27,9 @@ class Listing(models.Model):
     description = models.CharField(blank=True, max_length=1064, null=True)
     starting_bid = models.IntegerField(blank=True, null=True)
     category = models.CharField(max_length=64, blank=True, choices=CATEGORIES)
-    image = models.ImageField(default='https://user-images.githubusercontent.com/52632898/161646398-6d49eca9-267f-4eab-a5a7-6ba6069d21df.png')
+    image = models.ImageField(
+        default='https://user-images.githubusercontent.com/52632898/161646398-6d49eca9-267f-4eab-a5a7-6ba6069d21df.png',
+        upload_to='auctions/files/images')
     bid_counter = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     winner = models.CharField(max_length=64, blank=True, null=True)

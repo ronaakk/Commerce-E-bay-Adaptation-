@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# To allow media files to be shown on index page
+MEDIA_ROOT = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = ''
+MEDIA_URL = ''
 
 
 # Quick-start development settings - unsuitable for production

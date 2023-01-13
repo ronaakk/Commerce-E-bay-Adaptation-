@@ -1,14 +1,45 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block extra_head %}
+    <link href="{% static 'auctions/index_styles.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+
 
 {% block body %}
-    <div style="padding-left: 12px">
+    <div class="overall-layout">
         <h2>Active Listings</h2>
 
         {% if message %}
-            <div>{{message}}</div>
+            <br>
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
             <br>
         {% endif %}
-        TODO
     </div>
-    
+        
+    <!-- Displaying the active listings -->
+    <div class="main_grid">
+    {% if active_listings %}
+        {% for listing in active_listings %}
+            <div class="listing-card">
+                <div class="listing-thumbnail">
+                    <img src={{listing.image}} class="listing-image" >
+                </div>
+                <div class="listing-information">
+                    <h5 class="card-title listing-title">{{listing.title}}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted current-price">${{listing.starting_bid}}</h6>
+                </div>
+                <div class="listing-actions">
+                    <a href="#" class="btn btn-primary view-button">View</a>
+                    <!--TODO: Make watchlist-->
+                    <a href="#" class="btn btn-primary add-to-watchlist-button">Watchlist</a>
+                </div> 
+            </div> 
+        {% endfor %}
+    {% else %}
+        <div>No active listings.</div>
+    {% endif %}
+    </div>
 {% endblock %}
