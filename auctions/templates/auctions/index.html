@@ -10,12 +10,12 @@
     <div class="overall-layout">
         <h2>Active Listings</h2>
 
-        {% if message %}
+        {% if messages %}
+            {% for message in messages %}
             <br>
-            <div class="alert alert-danger" role="alert">
-                {{ message }}
-            </div>
-            <br>
+            <div class={{ message.tags }} "alert alert-primary" role="alert">{{ message }}</div>
+            <br>   
+            {% endfor %}
         {% endif %}
     </div>
         
@@ -32,7 +32,7 @@
                     <h6 class="card-subtitle mb-2 text-muted current-price">${{listing.starting_bid}}</h6>
                 </div>
                 <div class="listing-actions">
-                    <a href="#" class="btn btn-primary view-button">View</a>
+                    <a href= {% url 'view' listing.title %} class="btn btn-primary view-button">View</a>
                     <!--TODO: Make watchlist-->
                     <a href="#" class="btn btn-primary add-to-watchlist-button">Watchlist</a>
                 </div> 

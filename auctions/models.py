@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.forms import ModelForm, Textarea, NumberInput, Select, TextInput, FileInput
+from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -21,6 +22,24 @@ class Listing(models.Model):
     ('Other', 'Other')
     ]   
 
+    # Validating image upload
+    def validate_image(self):
+        avaible_formats = [
+            'png',
+            'jpeg',
+            'jpg',
+            ]
+
+        img = self.cleaned_data.get('image')
+        
+        if img:
+            img_ext = img.name.split(".")[-1]
+            if img.size > 4194304:
+                raise ValidationError("Image size must be less than 4MB")
+            if img_ext not in avaible_formats:
+                raise ValidationError("Image extension is not avaible")        
+        return img
+
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
     title = models.CharField(max_length=64, blank=False, null=False)
     minimum_bid = models.IntegerField(blank=False, null=True) 
@@ -29,7 +48,8 @@ class Listing(models.Model):
     category = models.CharField(max_length=64, blank=True, choices=CATEGORIES)
     image = models.ImageField(
         default='https://user-images.githubusercontent.com/52632898/161646398-6d49eca9-267f-4eab-a5a7-6ba6069d21df.png',
-        upload_to='auctions/files/images')
+        upload_to='auctions/files/images',
+        validators=[validate_image])
     bid_counter = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     winner = models.CharField(max_length=64, blank=True, null=True)

@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from .forms import *
 from .models import User
@@ -81,7 +82,8 @@ def register(request):
 
 def createListing(request):
     if request.method == "POST":
-
+        # listing = ListingForm(request.POST, request.FILES)
+    
         minimum_bid = request.POST['minimum_bid']
         starting_bid = request.POST['starting_bid']
 
@@ -94,9 +96,15 @@ def createListing(request):
         creator = request.user
         title = request.POST['title']
         description = request.POST['description']
-        image = request.POST['image']
         category = request.POST['category']
 
+        # Accessing the image from request.FILES
+        listing = ListingForm(request.FILES)
+        if listing.is_valid():
+            image = request.FILES.get('image')
+        else:
+            pass
+        
         # Using .objects.create much simpler solution
         auction = Listing.objects.create(
             creator=creator,
@@ -107,11 +115,20 @@ def createListing(request):
             category=category,
             image=image,
         )
-
-        return render(request, "auctions/index.html", {
-            "message": "Listing Created Successfully."
-        })
+        
+        messages.success(request, "Listing Created Successfully.")
+        return redirect(reverse('index', kwargs={
+            "active_listings": Listing.objects.filter(active=True)
+        })) 
     else:
         return render(request, "auctions/create.html", {
             "create_form": ListingForm()
         })
+
+
+def view(request, listing_title):
+    return render(request, "auctions/listing.html", {
+        "title": listing_title,
+        "listing": Listing.objects.get(title=listing_title)
+    })
+
