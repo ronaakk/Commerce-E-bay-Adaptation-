@@ -23,21 +23,19 @@ class Listing(models.Model):
     ]   
 
     # Validating image upload
-    def validate_image(self):
+    def validate_image(img):
         avaible_formats = [
             'png',
             'jpeg',
             'jpg',
             ]
-
-        img = self.cleaned_data.get('image')
         
         if img:
             img_ext = img.name.split(".")[-1]
             if img.size > 4194304:
                 raise ValidationError("Image size must be less than 4MB")
             if img_ext not in avaible_formats:
-                raise ValidationError("Image extension is not avaible")        
+                raise ValidationError("Image extension is not available")        
         return img
 
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creator")
@@ -47,14 +45,14 @@ class Listing(models.Model):
     starting_bid = models.IntegerField(blank=True, null=True)
     category = models.CharField(max_length=64, blank=True, choices=CATEGORIES)
     image = models.ImageField(
-        default='https://user-images.githubusercontent.com/52632898/161646398-6d49eca9-267f-4eab-a5a7-6ba6069d21df.png',
+        default='listing-images/default.jpeg',
         upload_to='auctions/files/images',
         validators=[validate_image])
     bid_counter = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     winner = models.CharField(max_length=64, blank=True, null=True)
 
-    def _str__(self):
+    def __str__(self):
         return f"{self.title} by {self.creator}"
 
 # Creating a listing form out of the Listings model

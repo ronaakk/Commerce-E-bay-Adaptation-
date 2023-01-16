@@ -13,8 +13,7 @@
         {% if messages %}
             {% for message in messages %}
             <br>
-            <div class={{ message.tags }} "alert alert-primary" role="alert">{{ message }}</div>
-            <br>   
+            <div class="{{ message.tags }} alert alert-primary" role="alert">{{ message }}</div>  
             {% endfor %}
         {% endif %}
     </div>
@@ -25,7 +24,11 @@
         {% for listing in active_listings %}
             <div class="listing-card">
                 <div class="listing-thumbnail">
-                    <img src={{listing.image}} class="listing-image" >
+                    {% if listing.image %}
+                        <img src="{{ listing.image }}" class="listing-image" >
+                    {% else %}
+                        <img src= "{% static '/default.jpeg' %}" class="listing-image" >
+                    {% endif %}
                 </div>
                 <div class="listing-information">
                     <h5 class="card-title listing-title">{{listing.title}}</h5>

@@ -129,4 +129,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# To get default image to start working?
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'listing-images')
+]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

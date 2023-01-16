@@ -5,9 +5,7 @@
 .main_grid {
     padding: 2em;
     display: grid;
-    column-gap: 3em;
-    row-gap: 2em;
-    /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
+    row-gap: 4em;
     grid-template-columns: 1fr 1fr 1fr;
 }
 

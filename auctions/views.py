@@ -81,45 +81,43 @@ def register(request):
 
 
 def createListing(request):
+    creator = request.user
     if request.method == "POST":
-        # listing = ListingForm(request.POST, request.FILES)
-    
-        minimum_bid = request.POST['minimum_bid']
-        starting_bid = request.POST['starting_bid']
-
-        if starting_bid > minimum_bid:
-            messages.error(request, 'Starting bid cannot be higher than the Minimum bid.')
-            return render(request, "auctions/create.html", {
-                "create_form": ListingForm(request.POST)
-            })
-    
-        creator = request.user
-        title = request.POST['title']
-        description = request.POST['description']
-        category = request.POST['category']
-
-        # Accessing the image from request.FILES
-        listing = ListingForm(request.FILES)
+        listing = ListingForm(request.POST, request.FILES)
         if listing.is_valid():
+            
+            minimum_bid = listing.cleaned_data['minimum_bid']
+            starting_bid = listing.cleaned_data['starting_bid']
+            title = listing.cleaned_data['title']
+            description = listing.cleaned_data['description']
+            category = listing.cleaned_data['category']
             image = request.FILES.get('image')
+
+            if starting_bid > minimum_bid:
+                messages.error(request, 'Starting bid cannot be higher than the Minimum bid.')
+                return render(request, "auctions/create.html", {
+                    "create_form": listing
+                })
+
+            # Using .objects.create much simpler solution
+            auction = Listing.objects.create(
+                creator=creator,
+                title=title,
+                description=description,
+                minimum_bid=minimum_bid,
+                starting_bid=starting_bid,
+                category=category,
+                image=image,
+            )
+            
+            messages.success(request, "Listing Created Successfully.")
+            return redirect(reverse('index'))
+
         else:
-            pass
-        
-        # Using .objects.create much simpler solution
-        auction = Listing.objects.create(
-            creator=creator,
-            title=title,
-            description=description,
-            minimum_bid=minimum_bid,
-            starting_bid=starting_bid,
-            category=category,
-            image=image,
-        )
-        
-        messages.success(request, "Listing Created Successfully.")
-        return redirect(reverse('index', kwargs={
-            "active_listings": Listing.objects.filter(active=True)
-        })) 
+            messages.error(request, 'Image extension not available! Acceptable formats in jpeg, png, jpg.')
+            return render(request, "auctions/create.html", {
+                    "create_form": listing
+                })
     else:
         return render(request, "auctions/create.html", {
             "create_form": ListingForm()
