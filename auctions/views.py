@@ -125,8 +125,8 @@ def createListing(request):
 
 
 def view(request, listing_title):
+    listing = Listing.objects.get(title=listing_title)
     return render(request, "auctions/listing.html", {
-        "title": listing_title,
-        "listing": Listing.objects.get(title=listing_title)
+        "listing": listing
     })
 

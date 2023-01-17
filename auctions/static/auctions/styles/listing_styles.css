@@ -1,0 +1,33 @@
+.overall-layout {
+    padding: 2em;
+    max-width: 950px;
+}
+
+.listing-container {
+
+}
+
+.listing-image {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.listing-details {
+    padding-left: 2em;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+    align-items: left;
+}
+
+.listing-actions {
+    display: flex;
+    flex-direction: row;
+}

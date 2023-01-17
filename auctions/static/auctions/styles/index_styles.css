@@ -6,6 +6,7 @@
     padding: 2em;
     display: grid;
     row-gap: 4em;
+    column-gap: 4em;
     grid-template-columns: 1fr 1fr 1fr;
 }
 

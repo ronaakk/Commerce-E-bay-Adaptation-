@@ -1,11 +1,58 @@
 {% extends 'auctions/layout.html' %}
 {% load static %}
 
-<div class="overall-layout">
-    
+{% block extra_head %}
+    <link href="{% static 'auctions/styles/listing_styles.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+
+{% block title %} {{ listing.title }}{% endblock title %}
+
+{% block body %}
+    <div class="overall-layout">
+        <div class="listing-container">
+            {% comment %} Make this div a flexbox {% endcomment %}
+            <div class="row">
+                <div class="listing-picture">
+                    {% if listing.image %}
+                        <img src="{{ listing.image.url }}" class="listing-image" >
+                    {% else %}
+                        <img src= "{% static '/default.jpeg' %}" class="listing-image" >
+                    {% endif %}
+                </div>
+
+                <div class="listing-details">
+                    <div class="listing-information">
+                        <div class="title listing-title"><strong>{{ listing.title }}</strong></div>
+                        <div class="creator">{{ listing.creator }}</div>
+                        {% if listing.description %}
+                            <div class="description">{{ listing.description }}</div> 
+                        {% else %}   
+                        <div class="description">No description.</div> 
+                        {% endif %}
+                        <div class="category">Category: {{ listing.category }}</div>
+                        <div class="current-price">Starting Bid: ${{ listing.starting_bid }}</div>
+                        <div class="minimum-bid">Minimum Bid: ${{ listing.minimum_bid }}</div>
+                        <div class="bid-counter">Bid Counter: {{ listing.bid_counter }}</div>
+                        {% if listing.winner %}
+                            <div class="winner">{{ listing.winner }}</div>
+                        {% else %}
+                            <div class="winner">No winner yet!</div>  
+                        {% endif %}
+
+                    </div>
+                    
+                    <div class="listing-actions">
+                        <!-- TODO: MAKE AN OFFER FUNCTIONALITY -->
+                        <a href= {% url 'view' listing.title %} class="btn btn-primary view-button">Make an Offer</a>
+                        <!-- TODO: Make watchlist-->
+                        <a href="#" class="btn btn-primary add-to-watchlist-button">Watchlist</a>
+                    </div>
+
+                </div>
+            </div>
 
 
+        </div>
 
-
-
-</div>
+    </div>
+{% endblock body %}
