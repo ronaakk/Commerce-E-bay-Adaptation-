@@ -1,4 +1,4 @@
-{% extends "auctions/layout.html" %}
+{% extends 'auctions/layout.html' %}
 {% load static %}
 
 {% block extra_head %}
@@ -8,7 +8,7 @@
 
 {% block body %}
     <div class="overall-layout">
-        <h2>Active Listings</h2>
+        <h2>{{ user.username }}, here is your Watchlist:</h2>
 
         {% if messages %}
             {% for message in messages %}
@@ -18,14 +18,14 @@
         {% endif %}
     </div>
         
-    <!-- Displaying the active listings -->
+    <!-- Displaying the listings -->
     <div class="main_grid">
-    {% if active_listings %}
-        {% for listing in active_listings %}
+    {% if listings %}
+        {% for listing in listings %}
             <div class="listing-card">
                 <div class="listing-thumbnail">
                     {% if listing.image %}
-                        <img src="{{ listing.image }}" class="listing-image" >
+                        <img src="{{ listing.image.url }}" class="listing-image" >
                     {% else %}
                         <img src= "{% static '/default.jpeg' %}" class="listing-image" >
                     {% endif %}
@@ -37,13 +37,13 @@
                     </div>
                     <div class="listing-actions">
                         <a href= {% url 'view' listing.title %} class="btn btn-primary view-button">View</a>
-                        <a href={% url 'add_to_watchlist' listing.id %} class="btn btn-primary add-to-watchlist-button">Watchlist</a>
+                        <a href={% url 'remove_from_watchlist' listing.id %} class="btn btn-danger add-to-watchlist-button">Remove</a>
                     </div> 
                 </div>
             </div> 
         {% endfor %}
     {% else %}
-        <div>No active listings.</div>
+        <div>No listings.</div>
     {% endif %}
     </div>
-{% endblock %}
+{% endblock body %}

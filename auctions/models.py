@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.forms import ModelForm, Textarea, NumberInput, Select, TextInput, FileInput
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 
 class User(AbstractUser):
@@ -48,6 +49,7 @@ class Listing(models.Model):
         default='listing-images/default.jpeg',
         upload_to='auctions/files/images',
         validators=[validate_image])
+    comments = models.ManyToManyField(Comment, blank=True)
     bid_counter = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     winner = models.CharField(max_length=64, blank=True, null=True)
@@ -80,3 +82,11 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.bid} made by {self.user}"
+
+
+class PersonalWatchList(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    listings = models.ManyToManyField(Listing, blank=True)
+
+    def __str__(self):
+        return f"Watchlist for {self.user}"

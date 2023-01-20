@@ -8,9 +8,17 @@
 {% block title %} {{ listing.title }}{% endblock title %}
 
 {% block body %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <br>
+            <div class="{{ message.tags }} alert alert-danger" role="alert">{{ message }}</div>  
+        {% endfor %}
+    {% endif %}
+
+
     <div class="overall-layout">
         <div class="listing-container">
-            {% comment %} Make this div a flexbox {% endcomment %}
             <div class="row">
                 <div class="listing-picture">
                     {% if listing.image %}
@@ -22,37 +30,44 @@
 
                 <div class="listing-details">
                     <div class="listing-information">
-                        <div class="title listing-title"><strong>{{ listing.title }}</strong></div>
-                        <div class="creator">{{ listing.creator }}</div>
-                        {% if listing.description %}
-                            <div class="description">{{ listing.description }}</div> 
-                        {% else %}   
-                        <div class="description">No description.</div> 
-                        {% endif %}
-                        <div class="category">Category: {{ listing.category }}</div>
-                        <div class="current-price">Starting Bid: ${{ listing.starting_bid }}</div>
-                        <div class="minimum-bid">Minimum Bid: ${{ listing.minimum_bid }}</div>
-                        <div class="bid-counter">Bid Counter: {{ listing.bid_counter }}</div>
+                        <!-- Listing creator and title -->
+                        <div class="header-details">
+                            <div class="title listing-title"><strong>{{ listing.title }}</strong></div>
+                            <div class="creator">{{ listing.creator }}</div>
+                        </div>
+                        
+                        <!-- Listing description -->
+                        <div class="description-section">
+                            {% if listing.description %}
+                                <div class="description">{{ listing.description }}</div> 
+                            {% else %}   
+                                <div class="description">No description.</div> 
+                            {% endif %}
+                        </div>
+                    
+                        <!-- All other info -->
+                        <div class="listing-stats-section">
+                            <div class="category"><strong>Category:</strong> {{ listing.category }}</div>
+                            <div class="current-price"><strong>Starting Bid:</strong> ${{ listing.starting_bid }}</div>
+                            <div class="minimum-bid"><strong>Minimum Bid:</strong> ${{ listing.minimum_bid }}</div>
+                            <div class="bid-counter"><strong>Bid Counter:</strong> {{ listing.bid_counter }}</div>
+                        </div>
+                        
                         {% if listing.winner %}
-                            <div class="winner">{{ listing.winner }}</div>
+                            <div class="winner"><strong>Winner: </strong>{{ listing.winner }}</div>
                         {% else %}
-                            <div class="winner">No winner yet!</div>  
+                            <div class="winner"><strong>Winner: </strong>No winner yet!</div>  
                         {% endif %}
-
                     </div>
                     
                     <div class="listing-actions">
                         <!-- TODO: MAKE AN OFFER FUNCTIONALITY -->
                         <a href= {% url 'view' listing.title %} class="btn btn-primary view-button">Make an Offer</a>
                         <!-- TODO: Make watchlist-->
-                        <a href="#" class="btn btn-primary add-to-watchlist-button">Watchlist</a>
+                        <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary add-to-watchlist-button">Watchlist</a>
                     </div>
-
                 </div>
             </div>
-
-
         </div>
-
     </div>
 {% endblock body %}

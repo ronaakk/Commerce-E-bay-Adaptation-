@@ -4,30 +4,79 @@
 }
 
 .listing-container {
+    border-radius: .5em;
+    box-shadow: 10px 10px 30px rgba(0,0,0,0.1);  
+    height: max-content;
+    width: max-content;
+}
 
+.listing-picture {
+    width:400px;
+    height:400px;    
+    overflow:hidden;
+    position:relative;
 }
 
 .listing-image {
     width: 400px;
     height: 400px;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 .row {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-evenly;
+
+    width: max-content;
 }
 
 .listing-details {
-    padding-left: 2em;
+    padding: 2em;
     display: flex;
     flex-direction: column;
 
-    justify-content: space-between;
-    align-items: left;
+    justify-content: space-evenly;
+    width: 330px; 
+}
+
+.listing-information {
+    display: flex;
+    flex-direction: column;
+    height: 295px;
 }
 
 .listing-actions {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+}
+
+.listing-title {
+    width: max-content;
+    font-size: 30px;
+}
+
+.creator {
+    font-size: 18px;
+    font-style: italic;
+}
+
+.header-details {
+    height: 90px;
+}
+
+.description {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    width: 400px;
+}
+
+.winner {
+    padding-top: 1em;
+    padding-bottom: 2em;
+}
+
+.listing-stats-section {
+    height: 120px;
 }

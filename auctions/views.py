@@ -1,4 +1,3 @@
-from django import forms
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
@@ -6,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .forms import *
-from .models import User
+from .models import *
 
 
 def index(request):
@@ -128,5 +127,55 @@ def view(request, listing_title):
     listing = Listing.objects.get(title=listing_title)
     return render(request, "auctions/listing.html", {
         "listing": listing
+    })
+
+def add_to_watchlist(request, listing_id):
+    user = request.user
+
+    # Retrieving the user watchlist (if it exists)
+    try:
+        watchlist_exists = PersonalWatchList.objects.get(user=request.user)
+    except:
+        watchlist_exists = None
+
+    # If there isn't one for this user, make one
+    if watchlist_exists == None:
+        PersonalWatchList.objects.create(user=user)
+
+    # Access that watchlist
+    watchlist = PersonalWatchList.objects.get(user=user)
+
+    # Getting the listing that was clicked
+    listing = Listing.objects.get(id=listing_id)
+
+    # Comparing the listings already present in their watchlist to the one that was hit
+    if (listing not in watchlist.listings.all()):
+        watchlist.listings.add(listing)
+        watchlist.save()
+    else:
+        messages.error(request, "Listing is already in your Watchlist.")
+        return redirect(reverse('index'))
+
+    messages.success(request, "Listing added to your Watchlist.")
+    return redirect(reverse('index'))
+
+def watchlist(request):
+
+    watchlist = PersonalWatchList.objects.get(user=request.user)
+    listings = watchlist.listings.all()
+
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings,
+    })
+
+def remove_from_watchlist(request, listing_id):
+
+    watchlist = PersonalWatchList.objects.get(user=request.user)
+    listing_to_remove = watchlist.listings.get(id=listing_id)
+    watchlist.listings.remove(listing_to_remove)
+
+    messages.success(request, f"'{listing_to_remove}' removed from your Watchlist.")
+    return render(request, "auctions/watchlist.html", {
+        "listings": watchlist.listings.all()
     })
 
