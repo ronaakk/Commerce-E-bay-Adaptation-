@@ -12,7 +12,12 @@
     {% if messages %}
         {% for message in messages %}
             <br>
-            <div class="{{ message.tags }} alert alert-danger" role="alert">{{ message }}</div>  
+            {% if message.tags == "error" %}
+                <div class="{{ message.tags }} alert alert-danger" role="alert">{{ message }}</div> 
+            {% else %}
+                <div class="{{ message.tags }} alert alert-primary" role="alert">{{ message }}</div> 
+            {% endif %}
+             
         {% endfor %}
     {% endif %}
 
@@ -50,6 +55,11 @@
                             <div class="category"><strong>Category:</strong> {{ listing.category }}</div>
                             <div class="current-price"><strong>Starting Bid:</strong> ${{ listing.starting_bid }}</div>
                             <div class="minimum-bid"><strong>Minimum Bid:</strong> ${{ listing.minimum_bid }}</div>
+                            {% if listing.last_bid == None %}
+                                <div class="bid-counter"><strong>Latest Bid:</strong>None</div>
+                            {% else %}
+                                <div class="bid-counter"><strong>Latest Bid:</strong> ${{ listing.last_bid }}</div>
+                            {% endif %}
                             <div class="bid-counter"><strong>Bid Counter:</strong> {{ listing.bid_counter }}</div>
                         </div>
                         
@@ -61,10 +71,12 @@
                     </div>
                     
                     <div class="listing-actions">
-                        <!-- TODO: MAKE AN OFFER FUNCTIONALITY -->
-                        <a href= {% url 'view' listing.title %} class="btn btn-primary view-button">Make an Offer</a>
-                        <!-- TODO: Make watchlist-->
-                        <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary add-to-watchlist-button">Watchlist</a>
+                        <a href= {% url 'make_a_bid' listing.id %} class="btn btn-primary view-button">Make an Offer</a>
+                        {% if listing in watchlist_listings %}
+                            <a href={% url 'remove_from_watchlist' listing.id %} class="btn btn-danger">Remove</a>
+                        {% else %}
+                            <a href={% url 'add_to_watchlist' listing.id %} class="btn btn-primary">Watchlist</a>
+                        {% endif %}    
                     </div>
                 </div>
             </div>

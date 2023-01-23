@@ -1,22 +1,41 @@
+from datetime import date
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .forms import *
 from .models import *
 
 
 def index(request):
-    active_listings = Listing.objects.filter(active=True)
+    try:
+        active_listings = Listing.objects.filter(active=True)
+    except:
+        active_listings = None
 
-    if active_listings is None:
-        return render(request, "auctions/index.html")
+    # If someone is logged in
+    user = request.user
+    if user.id != None:
+        try:
+            watchlist = PersonalWatchList.objects.get(user=request.user)
+            watchlist_listings = watchlist.listings.all()
+        except:
+            watchlist = None
+            watchlist_listings = None
+        
+        return render(request, "auctions/index.html", {
+            "active_listings": active_listings,
+            "watchlist": watchlist,
+            "watchlist_listings": watchlist_listings
+        })
+    else:
+        return render(request, "auctions/index.html", {
+            "active_listings": active_listings
+        })
 
-    return render(request, "auctions/index.html", {
-        "active_listings": active_listings
-    })
 
 
 def login_view(request):
@@ -125,10 +144,28 @@ def createListing(request):
 
 def view(request, listing_title):
     listing = Listing.objects.get(title=listing_title)
-    return render(request, "auctions/listing.html", {
-        "listing": listing
-    })
 
+    # If someone is logged in
+    user = request.user
+    if user.id != None:
+        try:
+            watchlist = PersonalWatchList.objects.get(user=request.user)
+            watchlist_listings = watchlist.listings.all()
+        except:
+            watchlist = None
+            watchlist_listings = None
+        
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "watchlist": watchlist,
+            "watchlist_listings": watchlist_listings
+        })
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing": listing
+        })
+
+@login_required(login_url='/login', redirect_field_name='add_to_watchlist')
 def add_to_watchlist(request, listing_id):
     user = request.user
 
@@ -156,7 +193,7 @@ def add_to_watchlist(request, listing_id):
         messages.error(request, "Listing is already in your Watchlist.")
         return redirect(reverse('index'))
 
-    messages.success(request, "Listing added to your Watchlist.")
+    messages.success(request, f"'{listing}' added to your Watchlist.")
     return redirect(reverse('index'))
 
 def watchlist(request):
@@ -179,3 +216,44 @@ def remove_from_watchlist(request, listing_id):
         "listings": watchlist.listings.all()
     })
 
+@login_required(login_url='/login', redirect_field_name='make_a_bid')
+def make_a_bid(request, listing_id):
+
+    listing = Listing.objects.get(id=listing_id)
+    user = request.user
+
+    if request.method == "POST":
+
+        bidform = BidForm(request.POST)
+        bids = Bid.objects.filter(auction=listing_id).order_by('-bid')
+        bid = int(request.POST['bid'])
+        
+        if bids:
+            current_price = int(bids[0].bid)
+        else:
+            current_price = int(listing.starting_bid)
+
+        if bid > current_price:
+
+            # Updating the listing data
+            new_bid = Bid.objects.create(user=user, bid=request.POST['bid'], auction=listing, date_created=date.today())
+
+            listing.bid_counter += 1
+            listing.last_bid = new_bid
+            listing.save()
+        
+            messages.success(request, f"Your bid of ${bid} was made successfully.")
+            return render(request, "auctions/listing.html", {
+                "listing": listing
+            })
+        else:
+            messages.error(request, "Please try again.")
+            return render(request, "auctions/bid.html", {
+                "bid_form": bidform,
+                "listing": listing
+            })
+    else:
+        return render(request, "auctions/bid.html", {
+            "bid_form": BidForm(),
+            "listing": listing
+        })

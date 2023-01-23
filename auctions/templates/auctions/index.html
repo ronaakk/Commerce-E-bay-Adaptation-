@@ -37,7 +37,11 @@
                     </div>
                     <div class="listing-actions">
                         <a href= {% url 'view' listing.title %} class="btn btn-primary view-button">View</a>
-                        <a href={% url 'add_to_watchlist' listing.id %} class="btn btn-primary add-to-watchlist-button">Watchlist</a>
+                        {% if listing in watchlist_listings %}
+                            <a href={% url 'remove_from_watchlist' listing.id %} class="btn btn-danger">Remove</a>
+                        {% else %}
+                            <a href={% url 'add_to_watchlist' listing.id %} class="btn btn-primary">Watchlist</a>
+                        {% endif %}    
                     </div> 
                 </div>
             </div> 

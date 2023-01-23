@@ -1,0 +1,60 @@
+{% extends 'auctions/layout.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block body %}
+
+    <div class="overall-layout">
+        <h2>Making an offer for '{{ listing.title }}'</h2>
+        <p class="text-muted">Reminder: The bid must be at least as large as the starting bid, and must be greater than any other bids that have been placed (if any) </p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{{ message.tags }} alert alert-danger" role="alert">{{ message }}</div>  
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <br>
+
+    <h3><strong>Listing Statistics:</strong></h3>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Minimum Bid ($)</th>
+            <th scope="col">Starting Bid ($)</th>
+            <th scope="col">Latest Bid ($)</th>
+            <th scope="col">Bids Made</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {% comment %} <th scope="row">1</th> {% endcomment %}
+            <td>${{listing.minimum_bid}}</td>
+            <td>${{listing.starting_bid}}</td>
+            {% if listing.last_bid == None %}
+                <td>None</td>
+            {% else %}
+                <td>${{listing.last_bid}}</td>
+            {% endif %}
+            <td>{{listing.bid_counter}}</td>
+        </tr>
+        </tbody>
+    </table>
+    
+    <br>
+
+    <!-- Making the bid form -->
+    <form action= "{% url 'make_a_bid' listing.id %}" method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="selectField" class="form-label">Bid ($)</label>
+            {% render_field bid_form.bid class="form-control" type="number" name="bid" placeholder="" %}
+        </div>
+
+        <input class="btn btn-primary" type="submit" value="Create Bid">
+    </form>
+
+{% endblock body %}
+
