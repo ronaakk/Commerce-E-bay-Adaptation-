@@ -1,13 +1,13 @@
 .overall-layout {
     padding: 2em;
-    max-width: 950px;
+    /* max-width: 950px; */
 }
 
 .listing-container {
     border-radius: .5em;
     box-shadow: 10px 10px 30px rgba(0,0,0,0.1);  
-    height: max-content;
-    width: max-content;
+    max-height: max-content;
+    max-width: max-content;
 }
 
 .listing-picture {
@@ -15,6 +15,11 @@
     height:400px;    
     overflow:hidden;
     position:relative;
+
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
 }
 
 .listing-image {
@@ -29,6 +34,7 @@
     justify-content: space-evenly;
 
     width: max-content;
+    height: max-content;
 }
 
 .listing-details {
@@ -37,19 +43,20 @@
     flex-direction: column;
 
     justify-content: space-evenly;
-    width: 330px; 
+    max-width: fit-content;
+    margin-right: 100px;
 }
 
 .listing-information {
     display: flex;
     flex-direction: column;
-    height: 295px;
+    height: max-content;
 }
 
 .listing-actions {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: left;
 }
 
 .listing-title {
@@ -63,13 +70,13 @@
 }
 
 .header-details {
-    height: 90px;
+    height: 100%;
 }
 
 .description {
     padding-top: 1em;
     padding-bottom: 1em;
-    width: 400px;
+    max-width: 500px;
 }
 
 .winner {
@@ -79,4 +86,8 @@
 
 .listing-stats-section {
     height: 120px;
+}
+
+.remove-button, .watchlist-button, .offer-button {
+    margin-right: 25px;
 }

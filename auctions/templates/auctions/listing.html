@@ -11,13 +11,11 @@
 
     {% if messages %}
         {% for message in messages %}
-            <br>
             {% if message.tags == "error" %}
                 <div class="{{ message.tags }} alert alert-danger" role="alert">{{ message }}</div> 
             {% else %}
                 <div class="{{ message.tags }} alert alert-primary" role="alert">{{ message }}</div> 
-            {% endif %}
-             
+            {% endif %} 
         {% endfor %}
     {% endif %}
 
@@ -42,13 +40,11 @@
                         </div>
                         
                         <!-- Listing description -->
-                        <div class="description-section">
-                            {% if listing.description %}
-                                <div class="description">{{ listing.description }}</div> 
-                            {% else %}   
-                                <div class="description">No description.</div> 
-                            {% endif %}
-                        </div>
+                        {% if listing.description %}
+                            <div class="description">{{ listing.description }}</div> 
+                        {% else %}   
+                            <div class="description">No description.</div> 
+                        {% endif %}
                     
                         <!-- All other info -->
                         <div class="listing-stats-section">
@@ -71,11 +67,11 @@
                     </div>
                     
                     <div class="listing-actions">
-                        <a href= {% url 'make_a_bid' listing.id %} class="btn btn-primary view-button">Make an Offer</a>
+                        <a href= {% url 'make_a_bid' listing.id %} class="btn btn-primary view-button offer-button">Make an Offer</a>
                         {% if listing in watchlist_listings %}
-                            <a href={% url 'remove_from_watchlist' listing.id %} class="btn btn-danger">Remove</a>
+                            <a href={% url 'remove_from_watchlist' listing.id %} class="btn btn-danger remove-button">Remove</a>
                         {% else %}
-                            <a href={% url 'add_to_watchlist' listing.id %} class="btn btn-primary">Watchlist</a>
+                            <a href={% url 'add_to_watchlist' listing.id %} class="btn btn-primary watchlist-button">Watchlist</a>
                         {% endif %}    
                     </div>
                 </div>

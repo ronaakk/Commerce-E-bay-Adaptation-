@@ -169,6 +169,16 @@ def view(request, listing_title):
 def add_to_watchlist(request, listing_id):
     user = request.user
 
+    # Getting the listing that was clicked
+    listing = Listing.objects.get(id=listing_id)
+
+    # Ensuring the creator of the listing can't add their own item to their watchlist
+    if request.user == listing.creator:
+        messages.error(request, "You cannot add your own listing to your watchlist.")
+        return render(request, "auctions/listing.html", {
+            "listing": listing
+        })
+
     # Retrieving the user watchlist (if it exists)
     try:
         watchlist_exists = PersonalWatchList.objects.get(user=request.user)
@@ -181,9 +191,6 @@ def add_to_watchlist(request, listing_id):
 
     # Access that watchlist
     watchlist = PersonalWatchList.objects.get(user=user)
-
-    # Getting the listing that was clicked
-    listing = Listing.objects.get(id=listing_id)
 
     # Comparing the listings already present in their watchlist to the one that was hit
     if (listing not in watchlist.listings.all()):
@@ -253,7 +260,35 @@ def make_a_bid(request, listing_id):
                 "listing": listing
             })
     else:
+        if request.user == listing.creator:
+            messages.error(request, "You cannot bid on your own item.")
+            return render(request, "auctions/listing.html", {
+                "listing": listing, 
+            })
+            
         return render(request, "auctions/bid.html", {
             "bid_form": BidForm(),
             "listing": listing
         })
+
+@login_required(login_url='/login', redirect_field_name='close')
+def close_listing(request, listing_id):
+    listing_to_close = Listing.objects.get(id=listing_id)
+    listing_to_close.active = False
+
+    bids = Bid.objects.filter(auction=listing_id).order_by('-bid')
+    highest_bid_user = bids[0].user
+
+    listing_to_close.winner = highest_bid_user
+    listing_to_close.save()
+
+    return render(request, "auctions/closed.html", {
+        "listing": listing_to_close
+    })
+    
+
+@login_required(login_url='/login', redirect_field_name='categories')
+def categories(request):
+    toys = Listing.objects.filter(category='Toys')
+    electronics = Listing.objects.filter(category='Electronics')
+    
