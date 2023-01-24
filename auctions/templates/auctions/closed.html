@@ -1,0 +1,48 @@
+{% extends 'auctions/layout.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <link href="{% static 'auctions/styles/index_styles.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+
+
+{% block body %}
+    <div class="overall-layout">
+        <h2>Closed Listings</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+            <br>
+            <div class="{{ message.tags }} alert alert-primary" role="alert">{{ message }}</div>  
+            {% endfor %}
+        {% endif %}
+    </div>
+        
+    <!-- Displaying the closed listings -->
+    <div class="main_grid">
+    {% if closed_listings %}
+        {% for listing in closed_listings %}
+            <div class="listing-card">
+                <div class="listing-thumbnail">
+                    {% if listing.image %}
+                        <img src="{{ listing.image }}" class="listing-image" >
+                    {% else %}
+                        <img src= "{% static '/default.jpeg' %}" class="listing-image" >
+                    {% endif %}
+                </div>
+                <div class="bottom-section">
+                    <div class="listing-information">
+                        <h5 class="card-title listing-title">{{listing.title}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted current-price">Sold for ${{ listing.last_bid }}</h6>
+                    </div>
+                    <div class="listing-winner">
+                        <h3>Winner: <strong>{{listing.winner}} </strong></h3>
+                    </div> 
+                </div>
+            </div> 
+        {% endfor %}
+    {% else %}
+        <div>No closed listings.</div>
+    {% endif %}
+    </div>
+{% endblock %}

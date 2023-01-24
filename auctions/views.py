@@ -279,14 +279,22 @@ def close_listing(request, listing_id):
     bids = Bid.objects.filter(auction=listing_id).order_by('-bid')
     highest_bid_user = bids[0].user
 
-    listing_to_close.winner = highest_bid_user
+    listing_to_close.winner = str(highest_bid_user)
     listing_to_close.save()
 
+    closed_listings = Listing.objects.filter(active=False)
+
     return render(request, "auctions/closed.html", {
-        "listing": listing_to_close
+        "closed_listings": closed_listings
+    })
+
+def closed_listings_page(request):
+    closed_listings = Listing.objects.filter(active=False)
+
+    return render(request, "auctions/closed.html", {
+        "closed_listings": closed_listings
     })
     
-
 @login_required(login_url='/login', redirect_field_name='categories')
 def categories(request):
     toys = Listing.objects.filter(category='Toys')
