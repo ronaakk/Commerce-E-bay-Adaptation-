@@ -11,8 +11,8 @@
 }
 
 .listing-picture {
-    width:400px;
-    height:400px;    
+    width:450px;
+    height:450px;    
     overflow:hidden;
     position:relative;
 
@@ -26,6 +26,7 @@
     width: 400px;
     height: 400px;
     object-fit: contain;
+    padding: 1em;
 }
 
 .row {

@@ -39,7 +39,7 @@ class Listing(models.Model):
         return img
 
     creator = models.ForeignKey('User', on_delete=models.CASCADE, related_name="creator")
-    title = models.CharField(max_length=64, blank=False, null=False)
+    title = models.CharField(max_length=35, blank=False, null=False)
     minimum_bid = models.IntegerField(blank=False, null=True) 
     description = models.CharField(blank=True, max_length=1064, null=True)
     starting_bid = models.IntegerField(blank=True, null=True)

@@ -51,11 +51,11 @@
                             <div class="current-price"><strong>Starting Bid:</strong> ${{ listing.starting_bid }}</div>
                             <div class="minimum-bid"><strong>Minimum Bid:</strong> ${{ listing.minimum_bid }}</div>
                             {% if listing.last_bid == None %}
-                                <div class="bid-counter"><strong>Latest Bid:</strong>None</div>
+                                <div class="bid-counter"><strong>Latest Bid: </strong>None</div>
                             {% else %}
-                                <div class="bid-counter"><strong>Latest Bid:</strong> ${{ listing.last_bid }}</div>
+                                <div class="bid-counter"><strong>Latest Bid: </strong> ${{ listing.last_bid }}</div>
                             {% endif %}
-                            <div class="bid-counter"><strong>Bid Counter:</strong> {{ listing.bid_counter }}</div>
+                            <div class="bid-counter"><strong>Bid Counter: </strong> {{ listing.bid_counter }}</div>
                         </div>
                         
                         {% if listing.winner %}
