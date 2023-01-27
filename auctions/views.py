@@ -2,7 +2,7 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -158,11 +158,13 @@ def view(request, listing_title):
         return render(request, "auctions/listing.html", {
             "listing": listing,
             "watchlist": watchlist,
-            "watchlist_listings": watchlist_listings
+            "watchlist_listings": watchlist_listings,
+            "comments": Comment.objects.filter(item=listing).order_by('-date_created')
         })
     else:
         return render(request, "auctions/listing.html", {
-            "listing": listing
+            "listing": listing,
+            "comments": Comment.objects.filter(item=listing).order_by('-date_created')
         })
 
 @login_required(login_url='/login', redirect_field_name='add_to_watchlist')
@@ -176,7 +178,8 @@ def add_to_watchlist(request, listing_id):
     if request.user == listing.creator:
         messages.error(request, "You cannot add your own listing to your watchlist.")
         return render(request, "auctions/listing.html", {
-            "listing": listing
+            "listing": listing,
+            "comments": Comment.objects.filter(item=listing).order_by('-date_created')
         })
 
     # Retrieving the user watchlist (if it exists)
@@ -251,7 +254,8 @@ def make_a_bid(request, listing_id):
         
             messages.success(request, f"Your bid of ${bid} was made successfully.")
             return render(request, "auctions/listing.html", {
-                "listing": listing
+                "listing": listing,
+                "comments": Comment.objects.filter(item=listing).order_by('-date_created')
             })
         else:
             messages.error(request, "Please try again.")
@@ -263,7 +267,8 @@ def make_a_bid(request, listing_id):
         if request.user == listing.creator:
             messages.error(request, "You cannot bid on your own item.")
             return render(request, "auctions/listing.html", {
-                "listing": listing, 
+                "listing": listing,
+                "comments": Comment.objects.filter(item=listing).order_by('-date_created')
             })
             
         return render(request, "auctions/bid.html", {
@@ -294,7 +299,31 @@ def closed_listings_page(request):
     return render(request, "auctions/closed.html", {
         "closed_listings": closed_listings
     })
-    
+
+@login_required(login_url='/login', redirect_field_name='add_comment')
+def add_comment(request, listing_id):
+    user = request.user
+    listing = Listing.objects.get(id=listing_id)
+
+    if request.method == "POST":
+        comment = request.POST['comment']
+
+        Comment.objects.create(user=user, comment=comment, item=listing, date_created=date.today())
+
+        comments = Comment.objects.filter(item=listing).order_by('-date_created')
+
+        return render(request, "auctions/listing.html", {
+            "listing": listing,
+            "comments": comments
+        })
+
+@login_required(login_url='/login', redirect_field_name='delete_comment')
+def delete_comment(request, listing_title, comment_id):
+
+    Comment.objects.get(id=comment_id).delete()
+
+    return redirect(f'/view/{listing_title}')
+ 
 @login_required(login_url='/login', redirect_field_name='categories')
 def categories(request):
     toys = Listing.objects.filter(category='Toys')

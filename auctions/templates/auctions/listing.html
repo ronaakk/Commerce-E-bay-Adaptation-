@@ -3,6 +3,7 @@
 
 {% block extra_head %}
     <link href="{% static 'auctions/styles/listing_styles.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 {% endblock extra_head %}
 
 {% block title %} {{ listing.title }}{% endblock title %}
@@ -78,6 +79,46 @@
                         {% endif %}                           
                     </div>
                 </div>
+            </div>
+        </div>
+        <hr>
+        <div class="comment-section">
+            <h3 class="comments-header">Comments</h3>
+            <div class="add-comment-section">
+                <form action= "{% url 'add_comment' listing.id %}" method = "POST" class="form-inline">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" class="form-control mb-2 mr-sm-2" name="comment" placeholder="Add a Comment">
+                    </div> 
+                    <button type="submit" class="btn btn-primary mb-2">Comment</button>
+                </form>
+            </div>
+
+            <div class="comments">
+                {% if comments %}
+                    {% for comment in comments %}
+                        <div class="comment-card">
+                            <!-- This will be the header section (ex. Ronak 1 day ago)-->
+                            <div class="comment-stats">
+                                <div class="user"><strong>{{ comment.user.username }}</strong></div>
+                                {% if user.username == comment.user.username %}
+                                <!-- TODO: Delete comment functionality -->
+                                    <a href="{% url 'delete_comment' listing.title comment.id %}" class="delete-button">
+                                        <span class="material-symbols-outlined" style="vertical-align: -6px;">
+                                        delete
+                                        </span>
+                                    </a>
+                                {% endif %}
+                               
+                            </div>
+                            <div class="comment-timestamp text-muted">{{ comment.date_created }}</div>
+                            <!-- The actual comment below -->
+                            <div class="actual-comment">
+                                {{ comment }}
+                            </div>
+                        </div>          
+                    {% endfor %}                
+                {% endif %}
             </div>
         </div>
     </div>

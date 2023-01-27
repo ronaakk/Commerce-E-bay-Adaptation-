@@ -38,7 +38,18 @@ class BidForm(ModelForm):
         fields = ['bid']
 
     widgets = {
-            'bid' : NumberInput(
-                attrs={"class": "form-control", "style": "margin-bottom: 10px"}),
-        }
+        'bid': NumberInput(
+            attrs={"class": "form-control", "style": "margin-bottom: 10px"})
+    }
 
+
+# Comment form
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['comment']
+
+    widgets = {
+        'comment': TextInput(
+            attrs={"class": "form-control", "style": "margin-bottom: 10px"})
+    }

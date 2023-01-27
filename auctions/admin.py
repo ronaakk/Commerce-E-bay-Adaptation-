@@ -7,8 +7,11 @@ from .models import *
 class ListingAdmin(admin.ModelAdmin):
     readonly_fields = ('id',)
 
+class CommentAdmin(admin.ModelAdmin):
+    readonly_fields = ('id', )
+
 admin.site.register(User)
 admin.site.register(Listing, ListingAdmin)
 admin.site.register(Bid)
-admin.site.register(Comment)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(PersonalWatchList)
