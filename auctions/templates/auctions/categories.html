@@ -1,0 +1,34 @@
+{% extends 'auctions/layout.html' %}
+{% load static %}
+
+{% block extra_head %}
+    <link href="{% static 'auctions/styles/index_styles.css' %}" rel="stylesheet">
+{% endblock extra_head %}
+
+{% block body %}
+
+    <div class="overall-layout">
+        <h2>View Listings By Category</h2>
+        <br>
+    
+        <form action="{% url 'categories' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-row align-items-center">
+                <div class="col-auto my-1">
+                    <label class="mr-sm-2 sr-only" for="inlineFormCustomSelect">Preference</label>
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="category">
+                    <option selected>Choose A Category...</option>
+                    {% for category in categories %}
+                        <option>{{ category }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-auto my-1">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>  
+            </div>
+        </form>
+    </div>
+
+{% endblock body %}

@@ -326,6 +326,22 @@ def delete_comment(request, listing_title, comment_id):
  
 @login_required(login_url='/login', redirect_field_name='categories')
 def categories(request):
-    toys = Listing.objects.filter(category='Toys')
-    electronics = Listing.objects.filter(category='Electronics')
-    
+    categories = [category[0] for category in Listing.CATEGORIES]
+
+    if request.method == "POST":
+        category = request.POST['category']
+        listings = Listing.objects.filter(category=category)
+
+        watchlist = PersonalWatchList.objects.get(user=request.user)
+        watchlist_listings = watchlist.listings.all()
+
+        return render(request, "auctions/category_view.html", {
+            "categories": categories,
+            "category": category,
+            "listings": listings,
+            "watchlist_listings": watchlist_listings
+        })
+    else: 
+        return render(request, "auctions/categories.html", {
+            "categories": categories
+        })
