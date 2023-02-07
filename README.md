@@ -56,7 +56,9 @@ To download this app, enter the following in your terminal:
 ```
 git clone https://github.com/ronaakk/Commerce-E-bay-clone-.git
 ```
-Run the app locally: 
+Migrate and run the app locally: 
 ```
+python3 manage.py makemigrations auctions
+python3 manage.py migrate
 python3 manage.py runserver
 ```
