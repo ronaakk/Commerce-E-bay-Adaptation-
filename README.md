@@ -54,7 +54,7 @@ Install requirements (Django):
  ```
 To download this app, enter the following in your terminal: 
 ```
-git clone https://github.com/ronaakk/Commerce-E-bay-clone-.git
+git clone https://github.com/ronaakk/E-Commerce-Site.git
 ```
 Migrate and run the app locally: 
 ```
